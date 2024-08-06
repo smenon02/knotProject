@@ -22,15 +22,15 @@ def plot_lines_and_crossings(lines, intersections):
         # Plot based on the status
         if status == 'over':
             # Line1 over Line2
-            xs2, ys2 = zip(*[(x, y) for x, y, z in line2.coords])
-            ax.plot(xs2, ys2, color='red', zorder=1)  # Under line
+            # xs2, ys2 = zip(*[(x, y) for x, y, z in line2.coords])
+            # ax.plot(xs2, ys2, color='red', zorder=1)  # Under line
 
             xs1, ys1 = zip(*[(x, y) for x, y, z in line1.coords])
             ax.plot(xs1, ys1, color='black', zorder=2,linewidth=3)  # Over line
         elif status == "under":
             # Line1 under Line2
-            xs1, ys1 = zip(*[(x, y) for x, y, z in line1.coords])
-            ax.plot(xs1, ys1, color='red', zorder=1)  # Under line
+            # xs1, ys1 = zip(*[(x, y) for x, y, z in line1.coords])
+            # ax.plot(xs1, ys1, color='red', zorder=1)  # Under line
 
             xs2, ys2 = zip(*[(x, y) for x, y, z in line2.coords])
             ax.plot(xs2, ys2, color='black', zorder=2,linewidth=3)  # Over line
