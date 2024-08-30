@@ -10,7 +10,7 @@ from knotIntersect import *
 from plot import *
 import random
 def main():
-    rotation_axis = 'x'
+    rotation_axis = 'y'
     # Defines angle at which rotation matrix will be applied
     rotation_angle = 90
     random.seed(50)
@@ -25,3 +25,38 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+# 1. Create a map with keys=line segments and values=boolean based on whether the line segment contains an under-crosssing
+#     -initialize all keys to be true
+#     -when second point found, set value of L2=False
+# 2. Map each line segment to the intersection points it crosses
+# 2. Create an Intersection class:
+#     1. Intersection point
+#     2. L1
+#     3. L2
+#     4. over or under crossing
+# all_foreground_loops=[]
+# for each intersection point:
+#     p1=first point of l1
+#     p2=second point of l1
+#     foreground_loop = True
+#     path_taken = []
+#     while p2 != intersection point:
+#         line = p1 --> p2
+#         if line == L2:
+#             p2 = intersection point
+#             for all intersection_points except starting_intersection:
+#                 if intersection_point.L2 = p1p2:
+#                     foreground_loop = False
+#                     break
+#         elif map of lines to overcrossings[line] == False:
+#             foreground_loop = False
+#             break
+#         else:
+#             path_taken.append(line)
+#             p1 = p2
+#             p2 = point after p2
+#     if foreground_loop:
+#         all_foreground_loops.append(path_taken)
+
