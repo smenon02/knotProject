@@ -2,6 +2,17 @@ from shapely.geometry import LineString, Point
 #Requires: set of coordinates
 #Modifies:
 #Effects: Takes in a list of coordinates and returns a list of corresponding LineString objects
+def find_coordinate_index(coords, coordinate):
+  coordinate = list(coordinate)
+  for i in range(len(coords)):
+    if coords[i][0] == coordinate[0] and coords[i][1] == coordinate[1]:
+      return i
+class Intersection:
+  def __init__(self, point, line1, line2):
+    self.point = point
+    self.l1 = line1
+    self.l2 = line2
+
 def coordinates_to_lines(coords):
   #Initializes empty list to stroe LineString objects
   Lines=[]
@@ -48,8 +59,9 @@ def project_line_to_2D(line):
 def find_intersections(coords):
     #Converts coordinates to LineString objects
     lines=coordinates_to_lines(coords)
+    coords_and_intersections = coords.copy()
     #Initializes empty map to hold intersection information
-    intersections_mapped={}
+    intersections = []
     #Iterate through set of lines
     for i in range(0,len(lines)-1):
       #Isolate LineObject for iteration i
@@ -71,9 +83,10 @@ def find_intersections(coords):
         if l1_2D.intersects(l2_2D) and not (any(i in l1_2D_points for i in l2_2D_points)):
           #Define intersection point
           intersect = l1_2D.intersection(l2_2D)
-          #Mappings intersection point to lines where intersection occurs
-          intersections_mapped[intersect] = [l1,l2]
-    return intersections_mapped
+          intersections.append(Intersection(intersect, l1_2D, l2_2D))
+          intersection_index = find_coordinate_index(coords_and_intersections, l1_2D.coords[1])
+          coords_and_intersections.insert(intersection_index, intersect.coords[0])
+    return intersections, coords_and_intersections
 
 #Requires: LineString object, intersection point
 #Modifies:
@@ -112,27 +125,24 @@ def interpolate_z(line, xy_point):
   #Elt 1: Intersection Point
   #Elt 2: List of 2 LineString objects where intersection occurs
   #Elt 3: Crossing Type(ie:"over", "under" etc)
-def define_crossings(intersections):
-  #Initializes empty list to store crossing type information
-  full_mapping=[]
+def define_crossings(intersections, undercrossings_map):
   #Iterate through each intersection
-  for intersection in intersections:
+  for i in range(len(intersections)):
+    intersection=intersections[i]
     #Finds interpolated z values for both lines in intersection
-    z1=interpolate_z(intersections[intersection][0], intersection)
-    z2=interpolate_z(intersections[intersection][1], intersection)
+    z1=interpolate_z(intersection.l1, intersection.point)
+    z2=interpolate_z(intersection.l2, intersection.point)
 
     #If both interpolated z values exist
     if z1 is not None and z2 is not None:
-      #Definition of over-crossing(ie: Line 1 crosses over Line 2)
-      if z1 > z2:
-          #print(f"Line 1 is over Line 2 at {intersection} with Z1 = {z1} and Z2 = {z2}")
-          #Adds list containing over-crossing information to full set
-          full_mapping.append([intersection, [intersections[intersection][0],intersections[intersection][1]], "over"])
-          #full_mapping.append([intersection, [intersections[intersection][0],intersections[intersection][1]], "under"])
-      # Definition of under-crossing(ie: Line 1 crosses under Line 2)
-      elif z1 < z2:
-          #print(f"Line 1 is under Line 2 at {intersection} with Z1 = {z1} and Z2 = {z2}")
-          # Adds list containing under-crossing information to full set
-          full_mapping.append([intersection, [intersections[intersection][0],intersections[intersection][1]], "under"])
-          #full_mapping.append([intersection, [intersections[intersection][0],intersections[intersection][1]], "over"])
-  return full_mapping
+      if z1 < z2:
+          intersections[i].l1 = intersection.l2
+          intersections[i].l2 = intersection.l1
+      undercrossings_map[intersection.l2] = True
+
+def create_undercrossing_map(coords):
+  lines = coordinates_to_lines(coords)
+  contains_undercrossings = {}
+  for line in lines:
+    contains_undercrossings[line] = False
+  return contains_undercrossings

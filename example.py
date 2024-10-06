@@ -8,6 +8,7 @@ from knotLoad import *
 from knotModify import *
 from knotIntersect import *
 from plot import *
+from foreground import *
 import random
 def main():
     rotation_axis = 'y'
@@ -21,7 +22,12 @@ def main():
                                        random.randint(1,10),
                                        random.randint(1,10)])
     apply_rotation_matrix(connected_alpha_coords, rotation_axis, rotation_angle)
-    plot_coordinates(connected_alpha_coords)
+    undercrossing_map = create_undercrossing_map(connected_alpha_coords)
+    intersections, coonected_alpha_coords_with_intersections = find_intersections(connected_alpha_coords)
+    define_crossings(intersections, undercrossing_map)
+    foreground_loops = detect_loops(connected_alpha_coords, intersections, undercrossing_map)
+    print(foreground_loops)
+    plot(connected_alpha_coords, intersections)
 
 if __name__ == "__main__":
     main()
