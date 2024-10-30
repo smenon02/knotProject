@@ -1,37 +1,27 @@
-#import libraries
-import numpy as np
-from Bio import PDB
-from shapely.ops import unary_union
-from mpl_toolkits.mplot3d import Axes3D
-#imports from helper files
-from knotLoad import connect_4th_alphas
-from knotModify import apply_rotation_matrix
-from knotIntersect import find_intersections
-from knotIntersect import define_crossings
-from knotIntersect import coordinates_to_lines
-from plot import plot_lines_and_crossings
-def main():
-    #Defines input file to draw protein information from
-    pdb_file = "inputdata/1yve.pdb"
-    #Defines axis by which rotation matrix will be applied
-    rotation_axis = 'x'
-    #Defines angle at which rotation matrix will be applied
-    rotation_angle = 90
+from helpers.load_data import *
+from helpers.loop_detection import *
+from helpers.projection import *
+from helpers.plotting import *
+from helpers.rotation import *
 
-    #Connect every 4th alpha coordinate in input file
-    connected_alpha_coords = connect_4th_alphas(pdb_file)
-    #print(connected_alpha_coords)
-    #Applies rotation matrix to connectecd chain of alpha carbons
-    apply_rotation_matrix(connected_alpha_coords, rotation_axis, rotation_angle)
-    #Creates line objects from coordinates. Used for plotting
-    lines = coordinates_to_lines(connected_alpha_coords)
-    #Finds intersections in 2D projection of alpha chain
-    intersections = find_intersections(connected_alpha_coords)
-    #Defines crossing types for each intersection.
-    crossings = define_crossings(intersections)
-    #print(crossings)
-    #Plots line objects along with defined crossings and intersections
-    plot_lines_and_crossings(lines, crossings)
+def main():
+    # Step 1: Load 3D coordinates
+    coordinates = load_coordinates()
+
+    rotation_axis = 'X'
+    rotation_angle = 0
+    apply_rotation_matrix(coordinates, rotation_axis, rotation_angle)
+
+    # Step 2: Detect foreground loops
+    loops, overcrossings, loop_points = detect_foreground_loops_and_overcrossings(coordinates)
+
+
+    # Step 3: Project coordinates to 2D
+    projected_coordinates = project_to_2d(coordinates)
+
+    # Step 4: Plot the structure with foreground loops highlighted
+    plot_structure_with_loops(projected_coordinates, loops, overcrossings)
+
 
 if __name__ == "__main__":
     main()

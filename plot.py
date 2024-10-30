@@ -5,7 +5,7 @@ from utils import *
 #Requires: List of LineString Objects, List of intersection information
 #Modifies:
 #Effects: Creates a 2D plot with defined crossing types for a set of lines
-def plot(coordinates, intersections):
+def plot(coordinates):
     fig, ax = plt.subplots()
     x_values = [x for x, y, z in coordinates]
     y_values = [y for x, y, z in coordinates]
@@ -20,9 +20,9 @@ def plot(coordinates, intersections):
         if endpoints[i]:
             plt.scatter(x,y,color='red', s=100)
 
-    for intersection in intersections:
-        xs1, ys1 = zip(*[(x, y) for x, y, z in intersection.l1.coords])
-        ax.plot(xs1, ys1, color='black', zorder=2, linewidth=3)  # Over line
+    # for intersection in intersections:
+    #     xs1, ys1 = zip(*[(x, y) for x, y, z in intersection.l1.coords])
+    #     ax.plot(xs1, ys1, color='black', zorder=2, linewidth=3)  # Over line
     # Add labels and title
     plt.xlabel('X')
     plt.ylabel('Y')
