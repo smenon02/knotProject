@@ -1,4 +1,5 @@
 from shapely.geometry import LineString
+from shapely.geometry import Point
 from itertools import combinations
 class Intersection:
     def __init__(self, l1, l2, pt):
@@ -62,8 +63,9 @@ def find_intersections(coords):
                 under_line = l2_2d if over_line == l1 else l1_2d
                 point = l1_2d.intersection(l2_2d)
                 if point.coords[0] != l1_2d.coords[1] and point.coords[0] != l2_2d.coords[0]:
+                    #point = Point([round(point.coords[0][0],1), round(point.coords[0][0],1)])
                     intersections.append(Intersection(over_line, under_line, point))
                     undercrossing_lines.append(under_line)
-    return intersections, under_line
+    return intersections, undercrossing_lines
 
 

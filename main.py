@@ -7,11 +7,13 @@ def main():
     rotation_axis = 'x'
     rotation_angle = 90
 
-    apply_rotation_matrix(coords, rotation_axis, rotation_angle)
+    # apply_rotation_matrix(coords, rotation_axis, rotation_angle)
     intersections, undercrossings = find_intersections(coords)
     graph = build_graph(coords, intersections)
-    print(graph)
-    plot(coords, intersections)
+    cycle = find_cycle(graph)
+    foreground = foregrounds(cycle, undercrossings, intersections)
+    print(intersections)
+    plot(coords)
 
 if __name__ == '__main__':
     main()

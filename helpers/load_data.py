@@ -64,6 +64,6 @@ def apply_rotation_matrix(chain, rotation_axis, rotation_angle):
         # Applies dot product of coordinate set and rotation matrix
         coord_set = np.dot(rotation_matrix, coord_set)
         # Replaces values in original coordinate set with dot product result
-        chain[i][0] = coord_set[0]
-        chain[i][1] = coord_set[1]
-        chain[i][2] = coord_set[2]
+        chain[i][0] = round(coord_set[0], 3)
+        chain[i][1] = round(coord_set[1], 3)
+        chain[i][2] = round(coord_set[2], 3)
