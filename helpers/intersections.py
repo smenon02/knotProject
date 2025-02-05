@@ -42,6 +42,7 @@ def find_intersections(coords):
     line_segments = []
     intersections = []
     undercrossing_lines = []
+    overcrossing_lines = []
     for i in range(len(coords)-1):
         x1 = coords[i][0]
         y1 = coords[i][1]
@@ -61,12 +62,14 @@ def find_intersections(coords):
             l2_2d = project_line_2D(l2)
             if l1_2d.intersects(l2_2d) and not l1_2d.intersection(l2_2d).is_empty:
                 under_line = l2_2d if is_overcrossing(l1,l2) else l1_2d
+                over_line = l1_2d if under_line is l2_2d else l2_2d
                 crossing_type = 'over' if is_overcrossing(l1,l2) else 'under'
                 point = l1_2d.intersection(l2_2d)
                 if point.coords[0] != l1_2d.coords[1] and point.coords[0] != l2_2d.coords[0]:
                     #point = Point([round(point.coords[0][0],1), round(point.coords[0][0],1)])
                     intersections.append(Intersection(l1_2d, l2_2d, crossing_type, point))
                     undercrossing_lines.append(under_line)
-    return intersections, undercrossing_lines
+                    overcrossing_lines.append(over_line)
+    return intersections, undercrossing_lines, overcrossing_lines
 
 
