@@ -59,7 +59,7 @@ def find_intersections(coords):
 
             l1_2d = project_line_2D(l1)
             l2_2d = project_line_2D(l2)
-            if l1_2d.intersects(l2_2d):
+            if l1_2d.intersects(l2_2d) and not l1_2d.intersection(l2_2d).is_empty:
                 under_line = l2_2d if is_overcrossing(l1,l2) else l1_2d
                 crossing_type = 'over' if is_overcrossing(l1,l2) else 'under'
                 point = l1_2d.intersection(l2_2d)

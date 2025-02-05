@@ -5,7 +5,7 @@ from math import sin
 from math import cos
 import numpy as np
 def load_coordinates():
-    random.seed(245)
+    random.seed(130)
     num_coords = 10 #Speicifes number of coordinates to randomly generate
     coordinates = []
     for i in range(num_coords):
