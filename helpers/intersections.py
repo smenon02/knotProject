@@ -2,9 +2,10 @@ from shapely.geometry import LineString
 from shapely.geometry import Point
 from itertools import combinations
 class Intersection:
-    def __init__(self, l1, l2, pt):
+    def __init__(self, l1, l2, crossing_in, pt):
         self.l1 = l1
         self.l2 = l2
+        self.crossing_type = crossing_in
         self.pt = pt
 
 def interpolate_z(p1,p2,t):
@@ -59,12 +60,12 @@ def find_intersections(coords):
             l1_2d = project_line_2D(l1)
             l2_2d = project_line_2D(l2)
             if l1_2d.intersects(l2_2d):
-                over_line = l1_2d if is_overcrossing(l1,l2) else l2_2d
-                under_line = l2_2d if over_line == l1 else l1_2d
+                under_line = l2_2d if is_overcrossing(l1,l2) else l1_2d
+                crossing_type = 'over' if is_overcrossing(l1,l2) else 'under'
                 point = l1_2d.intersection(l2_2d)
                 if point.coords[0] != l1_2d.coords[1] and point.coords[0] != l2_2d.coords[0]:
                     #point = Point([round(point.coords[0][0],1), round(point.coords[0][0],1)])
-                    intersections.append(Intersection(over_line, under_line, point))
+                    intersections.append(Intersection(l1_2d, l2_2d, crossing_type, point))
                     undercrossing_lines.append(under_line)
     return intersections, undercrossing_lines
 

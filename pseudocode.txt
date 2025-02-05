@@ -1,0 +1,30 @@
+1. Load coordinates
+2. Apply rotation matrix
+3. Find all intersection points
+    a. Store list of all lines with undercrossings
+4. Build graph of all points and intersections
+    a. Each point and intersection = Node
+    b. Line segment between points and/or intersections = Edge
+5. Apply Depth First Search to find loops at each intersection point
+    a. DFS function for traversal:
+        Initialize List of all visited nodes
+        Add node to current path
+        for node in graph:
+            if node == start node
+                return path
+            else
+                recursively call DFS function
+6. Store shortest loop for each intersection point if multiple loops found
+7. Find which loops are foreground loops
+    For each loop:
+        for each line segment in the loop:
+            if line segment is undecrossing:
+                return None
+    return loop
+
+1. Go point by point   
+    If intersection is identified
+        continue traversing point by point until an undercrossing is reached
+    If you get back to original point, can identify as foreground loop
+
+2. 

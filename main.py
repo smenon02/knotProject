@@ -9,11 +9,12 @@ def main():
 
     # apply_rotation_matrix(coords, rotation_axis, rotation_angle)
     intersections, undercrossings = find_intersections(coords)
-    graph = build_graph(coords, intersections)
-    cycle = find_cycle(graph)
-    foreground = foregrounds(cycle, undercrossings, intersections)
-    print(intersections)
-    plot(coords)
+    #graph = build_graph(coords, intersections)
+    foregrounds = foreground_loops(build_lines(coords), intersections=intersections, undercrossings=undercrossings)
+    #print(intersections)
+    plot(coords, foregrounds)
 
 if __name__ == '__main__':
     main()
+
+    

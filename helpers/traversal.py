@@ -38,77 +38,50 @@ def build_graph(coordinates, intersections):
         graph[intersection_point].append(end2)
     return graph
 
-def shortest_loops(cycle_map):
-    shortest_cycles = {}
-    for node,path in cycle_map.items():
-        visited = {}
-        min_cycle = None
-        for i, current in enumerate(path):
-            if current in visited:
-                start_idx = visited[current]
-                cycle = path[start_idx:i + 1]
-                if min_cycle is None or len(cycle) < len(min_cycle):
-                    min_cycle = cycle
-            visited[current] = i
-        shortest_cycles[node] = min_cycle if min_cycle else []
-    return shortest_cycles
-
-def euclidien_distance(coord1, coord2):
-    x1=coord1[0]
-    y1=coord1[1]
-    x2=coord2[0]
-    y2=coord2[1]
-    return math.sqrt((x1 - x2)**2 + (y1-y2)**2)
-def find_cycle(graph):
-    cycles = {}
-    visited = {}
-    def dfs(current, start, visited, path):
-
-        visited[current] = True
-        path.append(current)
-        for neighbor in graph[current]:
-            if neighbor == start and len(path) > 2:
-                return path + [start]
-            elif not visited.get(neighbor, False):
-                result = dfs(neighbor, start, visited, path)
-                if result:
-                    return result
-
-        path.pop()
-        visited[current] = False
-        return None
-
-    for node in graph:
-        visited = {}
-        cycle = dfs(node, node, visited, [])
-        if cycle:
-            cycles[node] = cycle
-
-    return shortest_loops(cycles)
-
 def construct_line(pt1,pt2):
     x1 = pt1[0]
-    y1 = pt2[1]
+    y1 = pt1[1]
 
     x2 = pt2[0]
     y2 = pt2[1]
     return LineString([(x1, y1), (x2, y2)])
-def foregrounds(cycles, undercrossings, intersections):
-    foreground_loops=[]
-    for intersection in intersections:
-        foreground_found = True
-        intersection = tuple([intersection.pt.coords[0][0], intersection.pt.coords[0][1]])
-        cycle = cycles[intersection]
-        cycle_lines=[]
-        for i in range(len(cycle)-2):
-            cycle_lines.append(construct_line(cycle[i], cycle[i+1]))
-        for line in cycle_lines:
-            for under_line in undercrossings:
-                if line.distance(under_line) < .0001:
-                    foreground_found = False
-        if foreground_found:
-            foreground_loops.append(cycle)
-    return foreground_loops
 
+def build_lines(coords):
+    idx1=0
+    idx2=1
+    lines=[]
+    while(idx2 < len(coords)):
+        lines.append(construct_line(project_point_2D(coords[idx1]),project_point_2D(coords[idx2])))
+        idx1+=1
+        idx2+=1
+    return lines
 
+def find_loop(lines, intersection, undercrossings):
+    l1 = intersection.l1
+    l2 = intersection.l2
+    idx = lines.index(l1)
+    current_line = l1
+    loop = []
+    while current_line != l2:
+        if (current_line in undercrossings and len(loop) != 0) or idx == len(lines)-1:
+            return None
+        loop.append(current_line)
+        idx += 1
+        current_line = lines[idx]
+    start_line_start_coords = intersection.pt.coords[0]
+    start_line = LineString([(start_line_start_coords[0], start_line_start_coords[1]), (loop[0].coords[1][0],loop[0].coords[1][1])])
+    loop.pop(0)
+    loop.insert(0, start_line)
+    final_line_start_coords = l2.coords[0]
+    final_line_end_coords = intersection.pt.coords[0]
+    final_line = LineString([(final_line_start_coords[0], final_line_start_coords[1]), (final_line_end_coords[0], final_line_end_coords[1])])
+    loop.append(final_line)
+    return loop
 
+def foreground_loops(lines, intersections, undercrossings):
+    foregrounds=[]
+    for int in intersections:
+        int_loop = find_loop(lines, int, undercrossings)
+        if int_loop is not None:
+            foregrounds.append(int_loop)
+    return foregrounds
